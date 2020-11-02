@@ -1,0 +1,39 @@
+Commade importante pour bien commencer 
+
+python3 --V
+
+/////////// Installer docker /////////////
+	/// Prérequis ///
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+// Vérifier que tout est bien installé // 
+sudo apt-key fingerprint 0EBFCD88
+
+//////////////////////////////////////////////////////////
+
+
+sudo apt-get install docker docker.io // Installe docker
+
+docker build --tag bulletinboard:1.0 . // Cette commande build une image en fonction du path ou l'on se trouve, il faut un fichier Dockerfile 
+
+
+docker run --publish 8000:8080 --detach --name bb bulletinboard:1.0 
+
+// Beaucoup d'hyperparametre. run permet d'allumer le container. --publish permet de push sur le net et sur quel port. --detach permet de lancer le container en background. Le --name est explicite
+
+
+
+docker container stop 2D14E4D2 // Permet de stopper un container
+docker container rm 4ee260cd425b // Permet de supprimer un container
+docker rm --force 'dockername or Idcontainer' // Permet de supprimer un container qui tourne toujours
+
+docker images // Affiche les images actuellement crée
+docker ps // Affiche toutes les images qui run
