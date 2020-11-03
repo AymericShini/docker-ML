@@ -1,18 +1,25 @@
-import streamlit as st
-import pickle
+#Demange Aymeric
+#Afin de lancer ce code il faut run la commande : python3 mainIris.py
+
+import pandas as pd
+import uvicorn
 import sklearn
 import joblib
-import pandas as pd
+from fastapi import FastAPI
 
-joblib_file = "modelIris.pkl"
-model = joblib.load(joblib_file)
+app = FastAPI()
+model = joblib.load("modelIris.pkl")
 
-sepal_length = st.text_input("sepal_length :", "")
-sepal_width = st.text_input("sepal_width :", "")
-petal_length = st.text_input("petal_length :", "")
-petal_width = st.text_input("petal_width :", "")
 
-if (sepal_length and sepal_width and petal_length and petal_width) :
+#if you go to http://localhost:8000 the message hello world should appear
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+# Using Post method
+@app.get('/predict/{sepal_length}/{sepal_width}/{petal_length}/{petal_width}')
+async def predict(sepal_length,sepal_width,petal_length,petal_width):
     irisX = pd.DataFrame({
     'sepal_length': [float(sepal_length)],
     'sepal_width': [float(sepal_width)],
@@ -21,13 +28,15 @@ if (sepal_length and sepal_width and petal_length and petal_width) :
     })
     Y_pred = model.predict_proba(irisX)[0]
     
+    infoAlgorithm = "The algorithm found that the origin's name is"
+    infoPrediction = "The prediction in % is "
+
     if Y_pred[0] > Y_pred[1] and Y_pred[0]> Y_pred[2]:
-        st.text("setosa")
+        return {infoAlgorithm :'setosa', infoPrediction:Y_pred[0]*100}
     elif Y_pred[1] > Y_pred[0] and Y_pred[1]> Y_pred[2] :
-        st.text("versicolor")
+        return {infoAlgorithm:'versicolor', infoPrediction:Y_pred[1]*100}
     else :
-        st.text("virginica")
-    
-    
-else :
-    st.text("Remplis tous les champs")
+        return {infoAlgorithm:'virginica', infoPrediction:Y_pred[2]*100}
+        
+if __name__ == '__main__' :
+    uvicorn.run(app,host="127.0.0.1",port="8000")
