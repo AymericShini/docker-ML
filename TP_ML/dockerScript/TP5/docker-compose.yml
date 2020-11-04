@@ -1,0 +1,11 @@
+services:
+    database:
+        container_name: postgres_container
+        image: "postgres"
+        env_file:
+         - database.env
+        volumes:
+         - database-data:/var/lib/postgresql/data/
+
+volumes:
+    database-data:
